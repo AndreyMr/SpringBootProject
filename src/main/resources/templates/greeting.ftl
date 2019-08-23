@@ -1,5 +1,7 @@
 <#import "parts/common.ftl" as c>
 <@c.page>
-<div>Hello</div>
-<a href="/main">Main page</a>
+<h5>Hellow, guest</h5>
+<div>
+    This is test project Spring-boot
+</div>
 </@c.page>

@@ -23,6 +23,12 @@ public class User implements UserDetails {
 
     public User() {
     }
+    //проверка роли админа
+    public boolean isAdmin(){
+        return roles.contains(Role.ADMIN);
+    }
+    // проверка пользователя на логин
+
 
     public Long getId() {
         return id;
