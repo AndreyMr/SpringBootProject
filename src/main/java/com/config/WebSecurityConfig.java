@@ -25,8 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 //включаем авторизацию
                     .authorizeRequests()
-                    //по запросам на страницу "/" разрешаем доступ
-                    .antMatchers("/", "/registration", "/static/**").permitAll()
+                    //по запросам на страницу "/" разрешаем доступ (* после / обозначет что далее может лежать ещё один сегмент)
+                    .antMatchers("/", "/registration", "/static/**","/activate/*").permitAll()
                     // остальные запросы требуют авторизацию
                     .anyRequest().authenticated()
                 .and()

@@ -1,19 +1,28 @@
 <#macro login path isRegisterForm>
 <form action="${path}" method="post">
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="inputEmail3"> User name :</label>
+        <label class="col-sm-2 col-form-label" for="inputUsername"> User name :</label>
             <div class="col-sm-6">
-            <input class="form-control" type="text" name="username" id="inputEmail3" placeholder="User name"/>
+            <input class="form-control" type="text" name="username" id="inputUsername" placeholder="User name"/>
             </div>
     </div>
 
     <div class="form-group row">
-        <label for="inputPassword3" class="col-sm-2 col-form-label"> Password: </label>
+        <label for="inputPassword" class="col-sm-2 col-form-label"> Password: </label>
             <div class="col-sm-6">
-            <input type="password" name="password" class="form-control" id="inputPassword3" placeholder="Password"/>
+            <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password"/>
             </div>
     </div>
-
+    <!--отображаем, если это форма регистрации-->
+    <#if isRegisterForm>
+    <div class="form-group row">
+        <label for="inputEmail" class="col-sm-2 col-form-label"> Email: </label>
+        <div class="col-sm-6">
+            <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email"/>
+        </div>
+    </div>
+    </#if>
+    <!---->
     <input type="hidden" name="_csrf" value="${_csrf.token}" >
     <div class="form-group row">
         <div class="col-sm-10">
