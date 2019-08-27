@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -34,6 +34,13 @@ public class UserService implements UserDetailsService {
         user.setActivationCode(UUID.randomUUID().toString());
         //сохраняем пользователя
         userRepository.save(user);
+        sendActivationCodeEmail(user);
+
+
+        return true;
+    }
+
+    private void sendActivationCodeEmail(User user) {
         //проверка что пользователь ввел почтовый адрес
         if(!StringUtils.isEmpty(user.getEmail())){
             //формируем строку приветствия
@@ -45,8 +52,6 @@ public class UserService implements UserDetailsService {
             //производим отправку письма
             mailSender.send(user.getEmail(),"Activation code",message);
         }
-
-        return true;
     }
 
     public boolean activateUser(String code) {
@@ -57,5 +62,44 @@ public class UserService implements UserDetailsService {
         user.setActivationCode(null);
         userRepository.save(user);
         return true;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public void saveUser(String username, User user, Map<String,String> form) {
+        user.setUsername(username);
+        //получаем список ролей переведенных из enum в строковый вид
+        Set<String> collect = Arrays.stream(Role.values())
+                .map(Role::name)
+                .collect(Collectors.toSet());
+        // очищаем пользователя от всех текущих ролей
+        user.getRoles().clear();
+        for (String key : form.keySet()) {
+            if(collect.contains(key)){
+                user.getRoles().add(Role.valueOf(key));
+            }
+        }
+        userRepository.save(user);
+    }
+
+    public void updateUser(User user, String password, String email) {
+        String userEmail = user.getEmail();
+
+        boolean isEmailChange = (email != null && !email.equals(userEmail))
+                || (userEmail != null && !userEmail.equals(email));
+        if (isEmailChange){
+            user.setEmail(email);
+
+            if(!StringUtils.isEmpty(email)){
+                user.setActivationCode(UUID.randomUUID().toString());
+            }
+        }
+
+        if(!StringUtils.isEmpty(password)) user.setPassword(password);
+
+        userRepository.save(user);
+        if(isEmailChange) sendActivationCodeEmail(user);
     }
 }

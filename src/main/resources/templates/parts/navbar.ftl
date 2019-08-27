@@ -20,10 +20,17 @@
                 <a class="nav-link" href="/user">User List</a>
             </li>
             </#if>
-        </ul>
+            <!--user?? переменная user описывается только в том случае если пользователь авторизован в Spring Security
+            см. шаблон security.ftl-->
+             <#if user??>
+              <li class="nav-item ">
+              <a class="nav-link" href="/user/profile">Profile</a>
+             </li>
+    </#if>
+    </ul>
     </div>
     <div class="navbar-text mr-2">${name}</div>
-    <#if isEnable>
+    <#if user??>
     <@l.logout />
-    </#if>
+</#if>
 </nav>

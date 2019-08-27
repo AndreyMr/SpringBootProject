@@ -18,7 +18,8 @@
     <div class="form-group row">
         <label for="inputEmail" class="col-sm-2 col-form-label"> Email: </label>
         <div class="col-sm-6">
-            <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email"/>
+            <!--${email!''} если email не указа, то будет отображаться пустая строчка-->
+            <input type="email" name="email" class="form-control" id="inputEmail" value="${email!''}"/>
         </div>
     </div>
     </#if>

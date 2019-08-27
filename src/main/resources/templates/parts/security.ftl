@@ -8,12 +8,12 @@ know = Session.SPRING_SECURITY_CONTEXT??
         user = Session.SPRING_SECURITY_CONTEXT.authentication.principal
         name = user.getUsername()
         isAdmin = user.isAdmin()
-        isEnable = true
+
     >
 <#else>
     <#assign
         name = "Guest"
         isAdmin = false
-        isEnable = false
+
     >
 </#if>
