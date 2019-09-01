@@ -32,6 +32,8 @@ public class UserController {
         model.addAttribute("roles", Role.values());
         return "userEdit";
     }
+
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public String userSave(
@@ -42,6 +44,8 @@ public class UserController {
         userService.saveUser(username, user,form);
         return "redirect:/user";
     }
+
+
     //отображаем текущий профиль пользователя
     @GetMapping("profile")
     public String getProfile(Model model,
@@ -51,6 +55,7 @@ public class UserController {
         model.addAttribute("email", user.getEmail());
         return "profile";
     }
+
 
     @PostMapping("profile")
         public String updateProfile(

@@ -8,14 +8,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class MainController {
     public String greeting(Map<String, Object> model) {
         return "greeting";
     }
+
     @GetMapping("/main")
     public String main(@RequestParam(required = false) String filter, Model model){
         Iterable<Message> messages = messageRepository.findAll();
@@ -45,42 +47,48 @@ public class MainController {
 
         return "main";
     }
-    @PostMapping("add")
-    public  String add(
-            @AuthenticationPrincipal User user,
-            @RequestParam String text,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam String tag, Map<String,Object> model)
-            throws IOException {
-        Message message = new Message(text, tag, user);
-        if (file != null && !file.getOriginalFilename().isEmpty()){
-            File uplDir = new File(uploadPath);
-            if (!uplDir.exists()){
-                uplDir.mkdir();
+
+@PostMapping("/main")
+public String add(
+        @AuthenticationPrincipal User user,
+        @Valid Message message,
+        BindingResult bindingResult,
+        Model model,
+        @RequestParam("file") MultipartFile file
+) throws IOException {
+    message.setAuthor(user);
+    //если bindingResult имеет ошибки
+    if (bindingResult.hasErrors()) {
+        Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
+        // помещаем в модель карту с ошибками
+        model.mergeAttributes(errorsMap);
+        model.addAttribute("message", message);
+        // сохранение пользователя происходит только если ошибки отсутствуют
+    } else {
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
             }
-            String uuid = UUID.randomUUID().toString();
-            String resultFileName = uuid + "." + file.getOriginalFilename();
-            file.transferTo(new File(uploadPath + "/" + resultFileName));
-            message.setFilename(resultFileName);
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            message.setFilename(resultFilename);
         }
+        //если валидация прошла успешно, то надо удалить из модели message, иначе форма добавления останется открытой
+        model.addAttribute("message", null);
 
         messageRepository.save(message);
-
-        Iterable<Message> messages = messageRepository.findAll();
-        model.put("messages",messages);
-
-        return "main";
     }
-    @PostMapping("filter")
-    public String filter(@RequestParam String filter, Map<String,Object> model){
-        Iterable<Message> messages;
-        if(filter != null && !filter.isEmpty()){
-            messages = messageRepository.findByTag(filter);
-            model.put("messages", messages);
-        }else {
-            messages = messageRepository.findAll();
-            model.put("messages", messages);
-        }
-        return "main";
-    }
+
+    Iterable<Message> messages = messageRepository.findAll();
+    model.addAttribute("messages", messages);
+
+    return "main";
+}
+
 }

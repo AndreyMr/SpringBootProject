@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,19 +20,25 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private MailSender mailSender;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
+        if(user == null) throw new UsernameNotFoundException("User not found");
+        return user;
     }
     public boolean addUser(User user){
         User userDB = userRepository.findByUsername(user.getUsername());
         if(userDB != null) return false;
-
-        user.setActive(true);
+        // при добавлении нового пользователя до активации по email активацию ставим false
+        user.setActive(false);
         // устанавливаем права USER по умолчанию
         user.setRoles(Collections.singleton(Role.USER));
         // генерируем и устанавливаем код активации
         user.setActivationCode(UUID.randomUUID().toString());
+        //шифруем пароль перед добавлением пользователя в базу
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         //сохраняем пользователя
         userRepository.save(user);
         sendActivationCodeEmail(user);
@@ -60,6 +67,8 @@ public class UserService implements UserDetailsService {
         if(user == null) return false;
         //если найден, то устанавливаем в поле activationCode значение null, т.е. пользователь подтвердил email
         user.setActivationCode(null);
+        //активируем пользователя
+        user.setActive(true);
         userRepository.save(user);
         return true;
     }

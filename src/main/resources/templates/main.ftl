@@ -9,31 +9,52 @@
     </div>
 </div>
 <!---->
+
 <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
     Add new message
 </a>
-<div class="collapse" id="collapseExample">
+<div class="collapse <#if message??>show</#if>" id="collapseExample">
     <div class="form-group mt-3">
-        <form method="post" action="add" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
+
             <div class="form-group">
-                <input type="text" name="text" class="form-control" placeholder="Введите сообщение"/>
+                <!--приводим поле textError к булевому значению, если textError существует то добавляется
+                класс is-invalid, если нет то пустое значение -->
+                <input type="text" class="form-control ${(messageTextError??)?string('is-invalid', '')}"
+                       value="<#if message??>${message.messageText}</#if>" name="messageText" placeholder="Введите сообщение" />
+                <#if messageTextError??>
+                <div class="invalid-feedback">
+                    ${messageTextError}
+                </div>
+                </#if>
             </div>
+
             <div class="form-group">
-                <input type="text" name="tag" class="form-control" placeholder="Тег"/>
+                <input type="text" name="tag" class="form-control ${(messageTag??)?string('is-invalid', '')}"
+                       value="<#if message??>${message.tag}</#if>" placeholder="Тег"/>
+                <#if tagError??>
+                <div class="invalid-feedback">
+                    ${tagError}
+                </div>
+            </#if>
             </div>
+
             <div class="form-group">
                 <div class="custom-file">
                     <input type="file" class="form-control" name="file" class="custom-file-input" id="customFile"/>
                     <label class="custom-file-label" for="customFile">Choose file</label>
                 </div>
             </div>
+
             <div class="form-group">
-                <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <button type="submit" class="btn btn-primary">Add</button>
             </div>
+
+            <input type="hidden" name="_csrf" value="${_csrf.token}">
         </form>
     </div>
 </div>
+
 <div class="card-columns">
 <#list messages as message>
     <div class="card my-3">

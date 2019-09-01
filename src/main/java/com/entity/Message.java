@@ -1,7 +1,10 @@
 package com.entity;
 
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Message {
@@ -9,11 +12,17 @@ public class Message {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Please fill the message")
+    @Length(max = 2048, message = "Message too long (more 2Kb)")
     private String messageText;
+
+    @Length(max = 2048, message = "Message too long (more 2Kb)")
     private String tag;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User author;
+
     private String filename;
 
     public Message() {
