@@ -47,6 +47,7 @@ public class LoginController {
         }
         // addUser возвращает булево значение и если пользователь уже существует в базе возвращает false
         if(!userService.addUser(user)){
+            model.addAttribute("messageType","danger");
             model.addAttribute("message", "User exist");
             return "registration";
         }
@@ -56,8 +57,14 @@ public class LoginController {
     public String activate(Model model, @PathVariable String code){
         boolean isActivate = userService.activateUser(code);
 
-        if(isActivate) model.addAttribute("message", "Email Confirmed");
-        else {model.addAttribute("message", "Activation code is not found");}
+        if(isActivate) {
+            model.addAttribute("messageType","success");
+            model.addAttribute("message", "Email Confirmed");
+        }
+        else {
+            model.addAttribute("messageType","danger");
+            model.addAttribute("message", "Activation code is not found");
+        }
         return "login";
     }
 

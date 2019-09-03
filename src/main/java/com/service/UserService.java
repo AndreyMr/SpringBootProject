@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        if(!StringUtils.isEmpty(password)) user.setPassword(password);
+        if(!StringUtils.isEmpty(password)) user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
         if(isEmailChange) sendActivationCodeEmail(user);

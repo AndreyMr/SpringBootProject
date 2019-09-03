@@ -56,7 +56,15 @@
         </#if>
         </div>
     </div>
+    <div class="col-sm-6">
+        <div class="g-recaptcha" data-sitekey="6LfCE7YUAAAAAPAH5DrQiluhRsaF9QdeS6pNgzpc"></div>
+        <#if captureError??>
+        <div class="alert alert-${messageType}" role="alert">
+            ${captureError}
+        </div>
     </#if>
+    </div>
+</#if>
     <!---->
     <input type="hidden" name="_csrf" value="${_csrf.token}" >
     <div class="form-group row">

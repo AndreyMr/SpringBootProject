@@ -5,6 +5,10 @@
 <div class="mb-1">
     <h4>Add new user</h4>
 </div>
-${message?ifExists}
+<#if message??>
+<div class="alert alert-danger" role="alert">
+    ${message}
+</div>
+</#if>
 <@l.login "/registration"  true/>
 </@c.page>
