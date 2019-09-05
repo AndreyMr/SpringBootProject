@@ -46,6 +46,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     // разрешение пользоваться всем
                     .permitAll()
                 .and()
+                    /*включаем запомининание сессий
+                    * <dependency>
+                         <groupId>org.springframework.session</groupId>
+                        <artifactId>spring-session-jdbc</artifactId>
+                       </dependency>
+                    *
+                    * spring.session.jdbc.initialize-schema=always
+                    * spring.session.jdbc.table-name=SPRING_SESSION
+                    */
+                    .rememberMe()
+                .and()
                     //включаем логаут
                     .logout()
                     // разрешение пользоваться всем

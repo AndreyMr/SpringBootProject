@@ -58,9 +58,9 @@
     </div>
     <div class="col-sm-6">
         <div class="g-recaptcha" data-sitekey="6LfCE7YUAAAAAPAH5DrQiluhRsaF9QdeS6pNgzpc"></div>
-        <#if captureError??>
-        <div class="alert alert-${messageType}" role="alert">
-            ${captureError}
+        <#if captchaError??>
+        <div class="alert alert-danger" role="alert">
+            ${captchaError}
         </div>
     </#if>
     </div>
