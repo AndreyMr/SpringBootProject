@@ -15,6 +15,12 @@
             <li class="nav-item ">
                 <a class="nav-link" href="/main">Messages</a>
             </li>
+            <#if user??>
+            <li class="nav-item ">
+                <a class="nav-link" href="/user-messages/${currentUserId}">My messages</a>
+            </li>
+            </#if>
+            <!--Если пользователь админ, отображаем пункт меню -->
             <#if isAdmin>
             <li class="nav-item ">
                 <a class="nav-link" href="/user">User List</a>
@@ -26,8 +32,8 @@
               <li class="nav-item ">
               <a class="nav-link" href="/user/profile">Profile</a>
              </li>
-    </#if>
-    </ul>
+            </#if>
+         </ul>
     </div>
     <div class="navbar-text mr-2">${name}</div>
     <#if user??>
